@@ -1,3 +1,4 @@
+import { myData } from './data.js';  // add at top
 import express from 'express';
 import fetch from 'node-fetch';
 
@@ -22,7 +23,19 @@ app.post('/api/claude', async (req, res) => {
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01'
       },
-      body: JSON.stringify(req.body)
+     // body: JSON.stringify(req.body)
+      // Then in your /api/claude handler, change the fetch body to:
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
+        system: `You are a helpful assistant for our company.
+      Use the following data to answer user questions accurately.
+      If the answer isn't in the data, say so honestly.
+      
+      DATA:
+      ${JSON.stringify(myData, null, 2)}`,
+        messages: history
+      })
     });
 
     const data = await response.json();
